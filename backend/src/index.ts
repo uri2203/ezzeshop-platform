@@ -16,6 +16,7 @@ import agentRoutes from './routes/agent.routes';
 import campaignsRoutes from './routes/campaigns.routes';
 import creatorsRoutes from './routes/creators.routes';
 import streamingRoutes from './routes/streaming.routes';
+import adminRoutes from './routes/admin.routes';
 
 const app = express();
 const PORT = parseInt(process.env['PORT'] ?? '4000', 10);
@@ -71,6 +72,7 @@ app.use(`${API_PREFIX}/agent`, agentRoutes);
 app.use(`${API_PREFIX}/campaigns`, campaignsRoutes);
 app.use(`${API_PREFIX}/creators`, creatorsRoutes);
 app.use(`${API_PREFIX}/streaming`, streamingRoutes);
+app.use(`${API_PREFIX}/admin`, adminRoutes);
 
 // Error handling
 app.use(notFoundHandler);

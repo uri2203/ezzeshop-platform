@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
-import { Plus, TrendingUp, Users, DollarSign, Eye, Zap } from 'lucide-react';
+import { Plus, TrendingUp, Users, DollarSign, Eye, Zap, KeyRound, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/layout/Header';
 import { useAuthStore } from '@/store/auth.store';
@@ -32,6 +32,7 @@ export default function DashboardPage() {
 
   const isClient = user?.role === 'client';
   const isCreator = user?.role === 'creator';
+  const isAdmin = user?.role === 'admin';
 
   return (
     <div className="min-h-screen bg-background">
@@ -85,6 +86,29 @@ export default function DashboardPage() {
             <Link href={`/${locale}/campaigns/new`}>
               <Button variant="gradient">{t('create_campaign')}</Button>
             </Link>
+          </div>
+        )}
+
+        {isAdmin && (
+          <div className="mb-6 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-amber-500/10">
+                <AlertTriangle className="h-5 w-5 text-amber-500" />
+              </div>
+              <div className="flex-1">
+                <h2 className="mb-1 font-semibold text-foreground">Configuración de APIs pendiente</h2>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Algunos servicios externos (IA, pagos, email) pueden no estar configurados.
+                  Accede al panel de configuración para añadir las API keys.
+                </p>
+                <Link href={`/${locale}/settings`}>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <KeyRound className="h-4 w-4" />
+                    Configurar APIs
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         )}
 

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import { useTheme } from 'next-themes';
-import { Sun, Moon, Globe, Menu, X, Zap } from 'lucide-react';
+import { Sun, Moon, Globe, Menu, X, Zap, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/auth.store';
@@ -96,6 +96,13 @@ export function Header() {
               <Link href={`/${locale}/dashboard`}>
                 <Button variant="outline" size="sm">{t('dashboard')}</Button>
               </Link>
+              {user.role === 'admin' && (
+                <Link href={`/${locale}/settings`} title="Configuración de APIs">
+                  <Button variant="ghost" size="icon" aria-label="Configuración">
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </Link>
+              )}
               <Button variant="ghost" size="sm" onClick={() => void logout()}>{t('logout')}</Button>
             </div>
           ) : (
