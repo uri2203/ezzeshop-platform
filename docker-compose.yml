@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ezzeshop-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ezzeshop
+      POSTGRES_USER: ezzeshop_user
+      POSTGRES_PASSWORD: ezzeshop_password_dev
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ezzeshop_user -d ezzeshop']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ezzeshop-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass ezzeshop_redis_dev
+    volumes:
+      - redisdata:/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: ezzeshop-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://ezzeshop_user:ezzeshop_password_dev@postgres:5432/ezzeshop
+      REDIS_URL: redis://:ezzeshop_redis_dev@redis:6379
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/migrations:/app/migrations
+    command: npm run dev
+
+volumes:
+  pgdata:
+    name: ezzeshop_pgdata
+  redisdata:
+    name: ezzeshop_redisdata
